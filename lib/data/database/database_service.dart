@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/workout_record.dart';
 import '../models/daily_goal.dart';
 import '../../core/constants/app_constants.dart';
@@ -11,17 +14,41 @@ class DatabaseService {
   factory DatabaseService() => _instance;
 
   static Database? _database;
+  static bool _initialized = false;
+
+  /// 初始化数据库工厂（支持桌面平台）
+  static Future<void> initialize() async {
+    if (_initialized) return;
+
+    // 在Windows/Linux/macOS桌面平台使用sqflite_common_ffi
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
+
+    _initialized = true;
+  }
 
   /// 获取数据库实例
   Future<Database> get database async {
+    if (!_initialized) {
+      await initialize();
+    }
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
+  /// 获取数据库路径
+  Future<String> _getDatabasePath() async {
+    // 使用path_provider获取跨平台的应用文档目录
+    final Directory appDocDir = await getApplicationDocumentsDirectory();
+    return join(appDocDir.path, AppConstants.databaseName);
+  }
+
   /// 初始化数据库
   Future<Database> _initDatabase() async {
-    final String path = join(await getDatabasesPath(), AppConstants.databaseName);
+    final String path = await _getDatabasePath();
     return await openDatabase(
       path,
       version: AppConstants.databaseVersion,
@@ -211,14 +238,14 @@ class DatabaseService {
 
     final result = await db.rawQuery('''
       SELECT
-        date(start_time / 1000, 'unixepoch') as date,
+        date(start_time / 1000, 'unixepoch', 'localtime') as date,
         COUNT(*) as count,
         SUM(distance) as total_distance,
         SUM(duration) as total_duration,
         SUM(calories) as total_calories
       FROM workout_records
       WHERE start_time >= ?
-      GROUP BY date(start_time / 1000, 'unixepoch')
+      GROUP BY date(start_time / 1000, 'unixepoch', 'localtime')
       ORDER BY date
     ''', [startOfDay.millisecondsSinceEpoch]);
 

@@ -40,7 +40,9 @@ dependencies:
 
   # Local database
   sqflite: ^2.3.0
+  sqflite_common_ffi: ^2.3.0
   path: ^1.8.3
+  path_provider: ^2.1.1
 
   # GPS and location
   geolocator: ^10.1.0

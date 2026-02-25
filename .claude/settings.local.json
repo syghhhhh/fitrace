@@ -3,7 +3,8 @@
     "allow": [
       "Bash(cd G:\\\\AndroidProject\\\\fitrace:*)",
       "Bash(head:*)",
-      "Bash(cd \"G:\\\\AndroidProject\\\\fitrace\" && flutter build apk --debug 2>&1)"
+      "Bash(cd \"G:\\\\AndroidProject\\\\fitrace\" && flutter build apk --debug 2>&1)",
+      "Bash(taskkill:*)"
     ]
   }
 }
