@@ -2,6 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- GPS定位权限描述 -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Fitrace需要访问您的位置来记录运动轨迹</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Fitrace需要访问您的位置来记录运动轨迹和提供运动数据统计</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Fitrace需要访问您的位置来记录运动轨迹</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
